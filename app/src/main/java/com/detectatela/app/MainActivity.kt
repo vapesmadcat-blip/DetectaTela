@@ -8,6 +8,8 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.mediarouter.media.MediaRouter
+import androidx.mediarouter.media.MediaRouteSelector
+import androidx.mediarouter.media.MediaControlIntent
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         callback = object : MediaRouter.Callback() {
             override fun onRouteAdded(router: MediaRouter, route: MediaRouter.RouteInfo) {
                 Log.d("DetectaTela", "Rota adicionada: ${route.name}")
-                atualizar("Nova rota encontrada: ${route.name}")
+                atualizar("Nova rota: ${route.name}")
             }
 
             override fun onRouteSelected(router: MediaRouter, route: MediaRouter.RouteInfo) {
@@ -49,22 +51,26 @@ class MainActivity : AppCompatActivity() {
         displayManager.registerDisplayListener(object : DisplayManager.DisplayListener {
             override fun onDisplayAdded(displayId: Int) {
                 val d = displayManager.getDisplay(displayId)
-                atualizar("Display externo detectado: ${d?.name}")
+                atualizar("Display externo: ${d?.name}")
             }
             override fun onDisplayRemoved(displayId: Int) {}
             override fun onDisplayChanged(displayId: Int) {}
         }, null)
 
         btnBuscar.setOnClickListener {
+            val selector = MediaRouteSelector.Builder()
+                .addControlCategory(MediaControlIntent.CATEGORY_LIVE_VIDEO)
+                .build()
+
             mediaRouter.addCallback(
-                MediaRouter.ROUTE_TYPE_LIVE_VIDEO,
+                selector,
                 callback!!,
                 MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY
             )
             atualizar("Buscando TVs e telas externas...")
         }
 
-        atualizar("Pronto! Toque em Buscar para procurar TVs")
+        atualizar("Toque em Buscar para procurar TVs")
     }
 
     private fun atualizar(texto: String) {
