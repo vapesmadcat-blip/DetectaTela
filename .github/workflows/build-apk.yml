@@ -5,6 +5,7 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+  workflow_dispatch:     # <-- Isso habilita o botão "Run workflow" na web e no app
 
 jobs:
   build:
